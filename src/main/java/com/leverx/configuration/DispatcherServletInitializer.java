@@ -1,4 +1,4 @@
-package com.leverx.config;
+package com.leverx.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
