@@ -1,9 +1,6 @@
 package com.leverx.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +10,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "game")
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -26,7 +24,6 @@ public class Game extends AbstractBaseEntity {
     private String description;
 
     @Column(name = "created_at")
-    @Enumerated(EnumType.STRING)
     @NotNull
     private OffsetDateTime createdAt;
 }
