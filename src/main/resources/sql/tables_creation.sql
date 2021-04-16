@@ -1,20 +1,20 @@
 CREATE TABLE IF NOT EXISTS "user"
 (
     id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    first_name varchar(30) NOT NULL,
-    last_name  varchar(35) NOT NULL,
-    email      varchar(35) NOT NULL,
-    password   varchar     NOT NULL,
-    created_at date        NOT NULL,
-    role       user_role   NOT NULL
+    first_name varchar(30)              NOT NULL,
+    last_name  varchar(35)              NOT NULL,
+    email      varchar(35)              NOT NULL,
+    password   varchar                  NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    role       user_role_enum           NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS game
 (
     id          integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name        varchar(30) NOT NULL,
+    name        varchar(30)              NOT NULL,
     description varchar,
-    created_at  date        NOT NULL
+    created_at  timestamp with time zone NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_game
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS feedback
 (
     id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     message    varchar,
-    star       star                     NOT NULL,
+    rating     rating_enum              NOT NULL,
     trader_id  integer,
     game_id    integer,
     created_at timestamp with time zone NOT NULL,

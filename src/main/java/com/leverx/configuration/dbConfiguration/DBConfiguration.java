@@ -6,4 +6,6 @@ public interface DBConfiguration {
     String getUSER();
 
     String getPASSWORD();
+
+    String getDRIVER_CLASS();
 }

@@ -34,7 +34,7 @@ public class SpringConfig implements WebMvcConfigurer {
     public DataSource dataSource() {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         try {
-            dataSource.setDriverClass("org.postgresql.Driver");
+            dataSource.setDriverClass(dbConfiguration.getDRIVER_CLASS());
             dataSource.setJdbcUrl(dbConfiguration.getURL());
             dataSource.setUser(dbConfiguration.getUSER());
             dataSource.setPassword(dbConfiguration.getPASSWORD());

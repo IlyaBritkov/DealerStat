@@ -1,10 +1,10 @@
-CREATE TYPE user_role AS ENUM (
+CREATE TYPE user_role_enum AS ENUM (
     'admin',
     'trader'
     )
 ;
 
-CREATE TYPE star AS ENUM (
+CREATE TYPE rating_enum AS ENUM (
     'one',
     'two',
     'three',

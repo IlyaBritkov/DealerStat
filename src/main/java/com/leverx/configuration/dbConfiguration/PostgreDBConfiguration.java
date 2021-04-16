@@ -12,10 +12,12 @@ public class PostgreDBConfiguration implements DBConfiguration {
     private final String URL;
     private final String USER;
     private final String PASSWORD;
+    private final String DRIVER_CLASS;
 
     private PostgreDBConfiguration() {
         this.URL = Objects.requireNonNull(PropertyReader.getProperties().getProperty("url"));
         this.USER = Objects.requireNonNull(PropertyReader.getProperties().getProperty("user"));
         this.PASSWORD = Objects.requireNonNull(PropertyReader.getProperties().getProperty("password"));
+        this.DRIVER_CLASS = Objects.requireNonNull(PropertyReader.getProperties().getProperty("driverClass"));
     }
 }
