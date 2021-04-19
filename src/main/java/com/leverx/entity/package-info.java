@@ -1,6 +1,8 @@
-@TypeDef(name = "enum_postgressql", typeClass = EnumTypePostgreSql.class)
-
+@TypeDef(
+        name = "pgsql_enum",
+        typeClass = PostgreSQLEnumType.class
+)
 package com.leverx.entity;
 
-import com.leverx.convertor.EnumTypePostgreSql;
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 import org.hibernate.annotations.TypeDef;

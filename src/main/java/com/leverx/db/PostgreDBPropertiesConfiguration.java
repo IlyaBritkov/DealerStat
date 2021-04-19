@@ -1,4 +1,4 @@
-package com.leverx.configuration.dbConfiguration;
+package com.leverx.db;
 
 import com.leverx.util.PropertyReader;
 import lombok.Getter;
@@ -8,13 +8,13 @@ import java.util.Objects;
 
 @Component
 @Getter
-public class PostgreDBConfiguration implements DBConfiguration {
+public class PostgreDBPropertiesConfiguration implements DBPropertiesConfiguration {
     private final String URL;
     private final String USER;
     private final String PASSWORD;
     private final String DRIVER_CLASS;
 
-    private PostgreDBConfiguration() {
+    private PostgreDBPropertiesConfiguration() {
         this.URL = Objects.requireNonNull(PropertyReader.getProperties().getProperty("url"));
         this.USER = Objects.requireNonNull(PropertyReader.getProperties().getProperty("user"));
         this.PASSWORD = Objects.requireNonNull(PropertyReader.getProperties().getProperty("password"));

@@ -20,7 +20,7 @@ public class PropertyReader {
     }
 
     public static void loadProperties() {
-        final String propertiesFileName = "dbConfiguration.properties";
+        final String propertiesFileName = "dbPropertiesConfiguration.properties";
         try (InputStream inputStream = PropertyReader.class.getClassLoader().getResourceAsStream(propertiesFileName)) {
             properties.load(inputStream);
             log.info("Properties were loaded from file: {}", propertiesFileName);

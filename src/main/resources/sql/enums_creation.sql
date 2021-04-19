@@ -1,14 +1,14 @@
 CREATE TYPE user_role_enum AS ENUM (
-    'admin',
-    'trader'
+    'ADMIN',
+    'TRADER'
     )
 ;
 
 CREATE TYPE rating_enum AS ENUM (
-    'one',
-    'two',
-    'three',
-    'four',
-    'five'
+    'ONE',
+    'TWO',
+    'THREE',
+    'FOUR',
+    'FIVE'
     )
 ;

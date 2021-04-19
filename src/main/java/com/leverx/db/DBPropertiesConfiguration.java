@@ -1,6 +1,6 @@
-package com.leverx.configuration.dbConfiguration;
+package com.leverx.db;
 
-public interface DBConfiguration {
+public interface DBPropertiesConfiguration {
     String getURL();
 
     String getUSER();
