@@ -26,4 +26,11 @@
         <appender-ref ref="consoleAppender"/>
     </category>
 
+    <category name="org.hibernate.type">
+        <!--Options: all, trace, debug, info, warn, error, fatal-->
+        <priority value="trace"/>
+        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="consoleAppender"/>
+    </category>
+
 </log4j:configuration>

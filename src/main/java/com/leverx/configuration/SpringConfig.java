@@ -1,6 +1,6 @@
 package com.leverx.configuration;
 
-import com.leverx.configuration.dbConfiguration.DBConfiguration;
+import com.leverx.db.DBPropertiesConfiguration;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +23,23 @@ import java.util.Properties;
 @EnableTransactionManagement
 @Slf4j
 public class SpringConfig implements WebMvcConfigurer {
-    private final DBConfiguration dbConfiguration;
+    private final DBPropertiesConfiguration dbPropertiesConfiguration;
 
     @Autowired
-    public SpringConfig(DBConfiguration dbConfiguration) {
-        this.dbConfiguration = dbConfiguration;
+    public SpringConfig(DBPropertiesConfiguration dbPropertiesConfiguration) {
+        this.dbPropertiesConfiguration = dbPropertiesConfiguration;
     }
 
     @Bean
     public DataSource dataSource() {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         try {
-            dataSource.setDriverClass("org.postgresql.Driver");
-            dataSource.setJdbcUrl(dbConfiguration.getURL());
-            dataSource.setUser(dbConfiguration.getUSER());
-            dataSource.setPassword(dbConfiguration.getPASSWORD());
+            dataSource.setDriverClass(dbPropertiesConfiguration.getDRIVER_CLASS());
+            dataSource.setJdbcUrl(dbPropertiesConfiguration.getURL());
+            dataSource.setUser(dbPropertiesConfiguration.getUSER());
+            dataSource.setPassword(dbPropertiesConfiguration.getPASSWORD());
+            dataSource.setInitialPoolSize(10);
+            dataSource.setMaxPoolSize(20);
         } catch (PropertyVetoException e) {
             e.printStackTrace();
             log.error("Exception occurred while trying to initialize dataSource bean: {}", e.toString());
