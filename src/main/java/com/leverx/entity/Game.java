@@ -30,19 +30,35 @@ public class Game extends AbstractBaseEntity {
     @NotNull
     private OffsetDateTime createdAt;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.DETACH,
+                    CascadeType.REFRESH})
     @JoinTable(name = "user_game",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @ToString.Exclude
     private List<User> traders = new ArrayList<>();
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "game",
+            fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.DETACH,
+                    CascadeType.REFRESH})
+    private List<Feedback> feedbacks = new ArrayList<>();
+
+    public Game(@NotNull String name, @Nullable String description, @NotNull OffsetDateTime createdAt) {
+        this.name = name;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
 
     public boolean addTrader(User user) {
         return traders.add(user);
