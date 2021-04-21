@@ -31,6 +31,17 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan("com.leverx.entity");
+
+        sessionFactory.setHibernateProperties(hibernateProperties());
+
+        return sessionFactory;
+    }
+
+    @Bean
     public DataSource dataSource() {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         try {
@@ -48,24 +59,6 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("com.leverx.entity");
-
-        Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.dialect",
-                "org.hibernate.dialect.PostgreSQL9Dialect");
-        hibernateProperties.setProperty("hibernate.show_sql", "true");
-        hibernateProperties.setProperty("format_sql", "true");
-        hibernateProperties.setProperty("use_sql_comments", "true");
-
-        sessionFactory.setHibernateProperties(hibernateProperties);
-
-        return sessionFactory;
-    }
-
-    @Bean
     public HibernateTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 
@@ -73,4 +66,16 @@ public class SpringConfig implements WebMvcConfigurer {
 
         return transactionManager;
     }
+
+    private Properties hibernateProperties() {
+        Properties hibernateProperties = new Properties();
+        hibernateProperties.setProperty("hibernate.dialect",
+                "org.hibernate.dialect.PostgreSQL9Dialect");
+        hibernateProperties.setProperty("hibernate.show_sql", "true");
+        hibernateProperties.setProperty("format_sql", "true");
+        hibernateProperties.setProperty("use_sql_comments", "true");
+
+        return hibernateProperties;
+    }
+
 }
