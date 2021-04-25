@@ -1,6 +1,7 @@
 package com.leverx.configuration;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -38,19 +38,14 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Bean
     public DataSource dataSource() {
-        ComboPooledDataSource dataSource = new ComboPooledDataSource();
-        try {
-            dataSource.setDriverClass(Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
-            dataSource.setJdbcUrl(Objects.requireNonNull(environment.getProperty("spring.datasource.url")));
-            dataSource.setUser(Objects.requireNonNull(environment.getProperty("spring.datasource.username")));
-            dataSource.setPassword(Objects.requireNonNull(environment.getProperty("spring.datasource.password")));
-            dataSource.setInitialPoolSize(Integer.parseInt(Objects.requireNonNull(environment.getProperty("cp.initialPoolSize"))));
-            dataSource.setMaxPoolSize(Integer.parseInt(Objects.requireNonNull(environment.getProperty("cp.maxPoolSize"))));
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
-            log.error("Exception occurred while trying to initialize dataSource bean: {}", e.toString());
-        }
-        return dataSource;
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
+        config.setJdbcUrl(Objects.requireNonNull(environment.getProperty("spring.datasource.url")));
+        config.setUsername(Objects.requireNonNull(environment.getProperty("spring.datasource.username")));
+        config.setPassword(Objects.requireNonNull(environment.getProperty("spring.datasource.password")));
+        config.setMaximumPoolSize(Integer.parseInt(Objects.requireNonNull(environment.getProperty("cp.maxPoolSize"))));
+
+        return new HikariDataSource(config);
     }
 
     @Bean
