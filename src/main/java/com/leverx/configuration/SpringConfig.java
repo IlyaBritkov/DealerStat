@@ -3,7 +3,6 @@ package com.leverx.configuration;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,8 +11,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -29,9 +28,8 @@ import java.util.Properties;
 @ComponentScan("com.leverx")
 @PropertySource("classpath:dbPropertiesConfiguration.properties")
 @EnableWebMvc
-@EnableJpaRepositories("com.leverx.repository")
+@EnableJpaRepositories(value = "com.leverx.repository", bootstrapMode = BootstrapMode.DEFERRED)
 @EnableTransactionManagement
-@Slf4j
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 public class SpringConfig implements WebMvcConfigurer {
     private final Environment environment;
@@ -50,11 +48,12 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        vendorAdapter.setGenerateDdl(true);
+
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setDataSource(dataSource());
-        entityManagerFactory.setPackagesToScan(new String[]{"com.leverx.entity"});
-
-        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        entityManagerFactory.setPackagesToScan("com.leverx.entity");
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
         entityManagerFactory.setJpaProperties(hibernateProperties());
 
@@ -65,7 +64,6 @@ public class SpringConfig implements WebMvcConfigurer {
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
-
         return transactionManager;
     }
 
