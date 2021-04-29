@@ -1,6 +1,7 @@
 package com.leverx.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,7 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "feedback")
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
@@ -41,7 +43,7 @@ public class Feedback extends AbstractBaseEntity {
             shape = JsonFormat.Shape.STRING,
             pattern = "yyyy-MM-dd HH:mm z")
     @NotNull
-    private ZonedDateTime createdAt;
+    private final ZonedDateTime createdAt = ZonedDateTime.now();
 
     @Column(name = "approved")
     private Boolean approved;
@@ -52,11 +54,10 @@ public class Feedback extends AbstractBaseEntity {
     @NotNull
     private RatingEnum rating;
 
-    public Feedback(String message, User trader, Game game, @NotNull ZonedDateTime createdAt, @NotNull RatingEnum rating) {
+    public Feedback(String message, User trader, Game game, @NotNull RatingEnum rating) {
         this.message = message;
         this.trader = trader;
         this.game = game;
-        this.createdAt = createdAt;
         this.rating = rating;
     }
 }

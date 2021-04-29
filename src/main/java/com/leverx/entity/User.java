@@ -1,6 +1,7 @@
 package com.leverx.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "\"user\"")
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
@@ -40,7 +42,7 @@ public class User extends AbstractBaseEntity {
             shape = JsonFormat.Shape.STRING,
             pattern = "yyyy-MM-dd HH:mm z")
     @NotNull
-    private ZonedDateTime createdAt;
+    private final ZonedDateTime createdAt = ZonedDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "user_role_enum")

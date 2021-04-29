@@ -12,8 +12,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "game")
-@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
-@JsonTypeName(value = "Game")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -36,7 +34,7 @@ public class Game extends AbstractBaseEntity {
             shape = JsonFormat.Shape.STRING,
             pattern = "yyyy-MM-dd HH:mm z")
     @NotNull
-    private ZonedDateTime createdAt;
+    private final ZonedDateTime createdAt = ZonedDateTime.now();
 
     @JsonIgnore
     @ToString.Exclude
@@ -51,6 +49,7 @@ public class Game extends AbstractBaseEntity {
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @NotNull
     private List<User> traders = new ArrayList<>();
 
     @JsonIgnore
@@ -60,10 +59,9 @@ public class Game extends AbstractBaseEntity {
             cascade = {CascadeType.ALL})
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    public Game(@NotNull String name, @Nullable String description, @NotNull ZonedDateTime createdAt) {
+    public Game(@NotNull String name, @Nullable String description) {
         this.name = name;
         this.description = description;
-        this.createdAt = createdAt;
     }
 
     public boolean addTrader(User user) {
