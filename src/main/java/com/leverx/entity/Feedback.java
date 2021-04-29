@@ -1,11 +1,12 @@
 package com.leverx.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "feedback")
@@ -35,9 +36,12 @@ public class Feedback extends AbstractBaseEntity {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm z")
     @NotNull
-    private OffsetDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @Column(name = "approved")
     private Boolean approved;
@@ -48,7 +52,7 @@ public class Feedback extends AbstractBaseEntity {
     @NotNull
     private RatingEnum rating;
 
-    public Feedback(String message, User trader, Game game, @NotNull OffsetDateTime createdAt, @NotNull RatingEnum rating) {
+    public Feedback(String message, User trader, Game game, @NotNull ZonedDateTime createdAt, @NotNull RatingEnum rating) {
         this.message = message;
         this.trader = trader;
         this.game = game;
