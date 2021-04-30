@@ -1,6 +1,7 @@
 package com.leverx.configuration;
 
-import com.leverx.entity.UserRole;
+import com.leverx.enums.Permission;
+import com.leverx.enums.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,9 +24,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.TRADER.name())
-                .antMatchers(HttpMethod.POST, "/api/**").hasRole(UserRole.ADMIN.name())
-                .antMatchers(HttpMethod.DELETE, "/api/**").hasRole(UserRole.ADMIN.name())
+                .antMatchers(HttpMethod.GET, "/api/**").hasAnyAuthority(Permission.GAMES_READ.getPermission())
+                .antMatchers(HttpMethod.POST, "/api/**").hasAnyAuthority(Permission.GAMES_WRITE.getPermission())
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasAnyAuthority(Permission.GAMES_WRITE.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -39,13 +40,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 User.builder()
                         .username("admin")
                         .password(passwordEncoder().encode("password"))
-                        .roles(UserRole.ADMIN.name())
+                        .authorities(UserRole.ADMIN.getGrantedAuthorities())
                         .build(),
 
                 User.builder()
                         .username("user")
                         .password(passwordEncoder().encode("password"))
-                        .roles(UserRole.TRADER.name())
+                        .authorities(UserRole.TRADER.getGrantedAuthorities())
                         .build()
 
         );

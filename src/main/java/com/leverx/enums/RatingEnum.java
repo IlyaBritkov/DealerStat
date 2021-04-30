@@ -1,4 +1,4 @@
-package com.leverx.entity;
+package com.leverx.enums;
 
 public enum RatingEnum {
     ONE,
