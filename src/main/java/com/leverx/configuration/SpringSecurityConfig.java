@@ -1,31 +1,33 @@
 package com.leverx.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.leverx.entity.UserRole;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-
+@Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user").password("{noop}password").roles("USER");
-    }
 
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
+                .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.TRADER.name())
+                .antMatchers(HttpMethod.POST, "/api/**").hasRole(UserRole.ADMIN.name())
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasRole(UserRole.ADMIN.name())
+                .anyRequest()
+                .authenticated()
                 .and()
                 .httpBasic();
     }
@@ -33,14 +35,24 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build();
+        return new InMemoryUserDetailsManager(
+                User.builder()
+                        .username("admin")
+                        .password(passwordEncoder().encode("password"))
+                        .roles(UserRole.ADMIN.name())
+                        .build(),
 
-        return new InMemoryUserDetailsManager(user);
+                User.builder()
+                        .username("user")
+                        .password(passwordEncoder().encode("password"))
+                        .roles(UserRole.TRADER.name())
+                        .build()
+
+        );
     }
 
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
 }
