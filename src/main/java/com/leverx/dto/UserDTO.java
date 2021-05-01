@@ -38,11 +38,12 @@ public enum UserDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Create implements FirstName, LastName, Email, Password {
+        public static class Create implements FirstName, LastName, Email, Password, Role {
             private String firstName;
             private String lastName;
             private String email;
             private String password;
+            private String role;
         }
 
         @NoArgsConstructor
@@ -61,11 +62,12 @@ public enum UserDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Public implements Id, FirstName, LastName, Email {
+        public static class Public implements Id, FirstName, LastName, Email, Role {
             private Integer id;
             private String firstName;
             private String lastName;
             private String email;
+            private String role;
         }
     }
 }
