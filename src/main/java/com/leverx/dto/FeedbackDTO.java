@@ -39,12 +39,11 @@ public enum FeedbackDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Create implements Message, TraderId, GameId, Rating, Approved {
+        public static class Create implements Message, TraderId, GameId, Rating{
             private String message;
             private Integer traderId;
             private Integer gameId;
             private String rating;
-            private Boolean approved;
         }
 
         @NoArgsConstructor

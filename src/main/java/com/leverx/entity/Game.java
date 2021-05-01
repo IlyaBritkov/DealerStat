@@ -68,4 +68,8 @@ public class Game extends AbstractBaseEntity {
         return traders.add(user);
     }
 
+    public boolean removeFeedback(Feedback feedback){
+        return feedbacks.remove(feedback);
+    }
+
 }
