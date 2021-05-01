@@ -2,7 +2,8 @@ package com.leverx.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 // todo validation
@@ -24,8 +25,18 @@ public enum GameDTO {
     public enum Request {
         ;
 
-        @Value
+        @NoArgsConstructor
+        @Data
         public static class Create implements Name, Description {
+            String name;
+            String description;
+
+        }
+
+        @NoArgsConstructor
+        @Data
+        public static class Update implements Id, Name, Description {
+            Integer id;
             String name;
             String description;
 
@@ -35,7 +46,8 @@ public enum GameDTO {
     public enum Response {
         ;
 
-        @Value
+        @NoArgsConstructor
+        @Data
         public static class Public implements Id, Name, Description {
             Integer id;
             String name;
