@@ -28,17 +28,17 @@ public enum GameDTO {
         @NoArgsConstructor
         @Data
         public static class Create implements Name, Description {
-            String name;
-            String description;
+            private String name;
+            private String description;
 
         }
 
         @NoArgsConstructor
         @Data
         public static class Update implements Id, Name, Description {
-            Integer id;
-            String name;
-            String description;
+            private Integer id;
+            private String name;
+            private String description;
 
         }
     }
@@ -49,9 +49,9 @@ public enum GameDTO {
         @NoArgsConstructor
         @Data
         public static class Public implements Id, Name, Description {
-            Integer id;
-            String name;
-            String description;
+            private  Integer id;
+            private  String name;
+            private String description;
         }
     }
 }
