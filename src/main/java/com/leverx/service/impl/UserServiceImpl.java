@@ -9,6 +9,7 @@ import com.leverx.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -38,6 +39,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoSuchEntityException(String.format("There is no User with ID = %d", id)));
         return Optional.of(userMapper.toDto(persistedUser));
 
+    }
+
+    public Optional<UserDTO.Response.Public> findByEmail(String email) throws UsernameNotFoundException {
+        User persistedUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User doesn't exist"));
+        return Optional.of(userMapper.toDto(persistedUser));
     }
 
     @Override

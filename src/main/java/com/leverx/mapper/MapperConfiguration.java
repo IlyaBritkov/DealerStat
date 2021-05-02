@@ -1,4 +1,4 @@
-package com.leverx.configuration;
+package com.leverx.mapper;
 
 import org.mapstruct.MapperConfig;
 import org.mapstruct.NullValuePropertyMappingStrategy;

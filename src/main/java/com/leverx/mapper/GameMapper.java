@@ -1,6 +1,5 @@
 package com.leverx.mapper;
 
-import com.leverx.configuration.MapperConfiguration;
 import com.leverx.dto.GameDTO;
 import com.leverx.entity.Game;
 import org.mapstruct.*;

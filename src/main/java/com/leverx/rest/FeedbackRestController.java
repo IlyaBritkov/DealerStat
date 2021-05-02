@@ -1,4 +1,4 @@
-package com.leverx.controller;
+package com.leverx.rest;
 
 import com.leverx.dto.FeedbackDTO;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/feedbacks")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
-public class FeedbackController {
+public class FeedbackRestController {
     private final FeedbackService feedbackService;
 
     @GetMapping

@@ -1,6 +1,5 @@
 package com.leverx.mapper;
 
-import com.leverx.configuration.MapperConfiguration;
 import com.leverx.dto.UserDTO;
 import com.leverx.entity.User;
 import org.mapstruct.Mapper;

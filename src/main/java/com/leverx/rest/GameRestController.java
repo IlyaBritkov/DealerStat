@@ -1,4 +1,4 @@
-package com.leverx.controller;
+package com.leverx.rest;
 
 import com.leverx.dto.GameDTO;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/games")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
-public class GameController {
+public class GameRestController {
     private final GameService gameService;
 
     @GetMapping

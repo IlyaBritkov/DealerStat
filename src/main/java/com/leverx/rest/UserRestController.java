@@ -1,4 +1,4 @@
-package com.leverx.controller;
+package com.leverx.rest;
 
 import com.leverx.dto.UserDTO;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
-public class UserController {
+public class UserRestController {
     private final UserService userService;
 
     @GetMapping

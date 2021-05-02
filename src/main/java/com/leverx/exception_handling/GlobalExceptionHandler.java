@@ -1,5 +1,6 @@
 package com.leverx.exception_handling;
 
+import com.leverx.exception_handling.exception.JwtAuthenticationException;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ResponseExceptionData> handleException(AccessDeniedException exception) {
-        log.error("Exception occurred: " + exception);
+        log.trace("Exception: {}", exception.toString());
         ResponseExceptionData data = new ResponseExceptionData();
         data.setInfo("You have not access to this");
 
@@ -29,8 +30,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ResponseExceptionData> handleException(JwtAuthenticationException exception) {
+        log.trace("Exception: {}", exception.toString());
+        ResponseExceptionData data = new ResponseExceptionData();
+        data.setInfo("You have to authorize to access");
+
+        return new ResponseEntity<>(data, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ResponseExceptionData> handleException(Exception exception) {
-        log.error("Exception occurred: " + exception);
+        log.trace("Exception: {}", exception.toString());
         ResponseExceptionData data = new ResponseExceptionData();
         data.setInfo("Page not found");
 
