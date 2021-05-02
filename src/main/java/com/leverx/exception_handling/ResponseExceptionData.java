@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PageNotFoundData {
+public class ResponseExceptionData {
     private String info;
 }

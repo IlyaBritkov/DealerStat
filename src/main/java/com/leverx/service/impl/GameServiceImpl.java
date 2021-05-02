@@ -36,12 +36,10 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Optional<GameDTO.Response.Public> findById(Integer id) throws NoSuchEntityException {
-        Optional<Game> gameOptional = gameRepository.findById(id);
-        if (gameOptional.isEmpty()) {
-            throw new NoSuchEntityException(String.format("There is no Game with ID = %d", id));
-        } else {
-            return Optional.of(gameMapper.toDto(gameOptional.get()));
-        }
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Game with ID = %d", id)));
+
+        return Optional.of(gameMapper.toDto(game));
     }
 
     @Override
@@ -53,19 +51,16 @@ public class GameServiceImpl implements GameService {
         return gameMapper.toDto(savedGame);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
-    public GameDTO.Response.Public update(GameDTO.Request.Update gameDtoRequest) throws NoSuchEntityException{
-        if (gameRepository.existsById(gameDtoRequest.getId())) {
-            Game persistedGame = gameRepository.findById(gameDtoRequest.getId()).get();
+    public GameDTO.Response.Public update(GameDTO.Request.Update gameDtoRequest) throws NoSuchEntityException {
+        Game persistedGame = gameRepository.findById(gameDtoRequest.getId())
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Game with id = %d", gameDtoRequest.getId())));
 
-            gameMapper.updateEntity(gameDtoRequest, persistedGame);
-            gameRepository.save(persistedGame);
+        gameMapper.updateEntity(gameDtoRequest, persistedGame);
+        gameRepository.save(persistedGame);
 
-            return gameMapper.toDto(persistedGame);
-        } else {
-            throw new NoSuchEntityException(String.format("There is no Game with id = %d to update", gameDtoRequest.getId()));
-        }
+        return gameMapper.toDto(persistedGame);
+
     }
 
     @Override

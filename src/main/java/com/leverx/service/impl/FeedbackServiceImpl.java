@@ -40,12 +40,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     public Optional<FeedbackDTO.Response.Public> findById(Integer id) throws NoSuchEntityException {
-        Optional<Feedback> feedbackOptional = feedbackRepository.findById(id);
-        if (feedbackOptional.isEmpty()) {
-            throw new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id));
-        } else {
-            return Optional.of(feedbackMapper.toDto(feedbackOptional.get()));
-        }
+        Feedback feedback = feedbackRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id)));
+
+        return Optional.of(feedbackMapper.toDto(feedback));
+
     }
 
     public FeedbackDTO.Response.Public save(FeedbackDTO.Request.Create feedbackDtoRequest) throws NoSuchEntityException {
@@ -61,13 +60,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         User trader = optionalTrader.get();
 
-        Optional<Game> optionalGame = gameRepository.findById(gameId);
-
-        if (optionalGame.isEmpty()) {
-            throw new NoSuchEntityException(String.format("There is no Game with ID = %d", traderId));
-        }
-
-        Game game = optionalGame.get();
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Game with ID = %d", traderId)));
 
         Feedback newFeedback = feedbackMapper.toEntity(feedbackDtoRequest);
         newFeedback.setTrader(trader);
@@ -76,34 +70,26 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackMapper.toDto(newFeedback);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public FeedbackDTO.Response.Public update(FeedbackDTO.Request.Update feedbackDtoRequest) throws NoSuchEntityException {
-        if (feedbackRepository.existsById(feedbackDtoRequest.getId())) {
+        Feedback persistedFeedback = feedbackRepository.findById(feedbackDtoRequest.getId())
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with id = %d to update", feedbackDtoRequest.getId())));
+        feedbackMapper.updateEntity(feedbackDtoRequest, persistedFeedback);
 
-            Feedback persistedFeedback = feedbackRepository.findById(feedbackDtoRequest.getId()).get();
-            feedbackMapper.updateEntity(feedbackDtoRequest, persistedFeedback);
+        feedbackRepository.save(persistedFeedback);
 
-            feedbackRepository.save(persistedFeedback);
-
-            return feedbackMapper.toDto(persistedFeedback);
-        } else {
-            throw new NoSuchEntityException(String.format("There is no Feedback with id = %d to update", feedbackDtoRequest.getId()));
-        }
+        return feedbackMapper.toDto(persistedFeedback);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Transactional
     public void deleteById(Integer id) throws NoSuchEntityException {
-        if (feedbackRepository.existsById(id)) {
-            Feedback feedback = feedbackRepository.findById(id).get();
-            Game game = feedback.getGame();
-            game.removeFeedback(feedback);
-            feedback.setGame(null);
-            feedback.setTrader(null);
-            feedbackRepository.delete(feedback);
-        } else {
-            throw new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id));
-        }
+        Feedback feedback = feedbackRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id)));
+
+        Game game = feedback.getGame();
+        game.removeFeedback(feedback);
+        feedback.setGame(null);
+        feedback.setTrader(null);
+        feedbackRepository.delete(feedback);
     }
 }

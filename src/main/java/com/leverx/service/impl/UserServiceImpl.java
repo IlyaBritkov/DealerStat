@@ -32,15 +32,12 @@ public class UserServiceImpl implements UserService {
                 .map(userMapper::toDto).collect(Collectors.toList());
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public Optional<UserDTO.Response.Public> findById(Integer id) throws NoSuchEntityException {
-        if (userRepository.existsById(id)) {
-            User persistedUser = userRepository.findById(id).get();
-            return Optional.of(userMapper.toDto(persistedUser));
-        } else {
-            throw new NoSuchEntityException(String.format("There is no User with ID = %d", id));
-        }
+        User persistedUser = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no User with ID = %d", id)));
+        return Optional.of(userMapper.toDto(persistedUser));
+
     }
 
     @Override
@@ -50,19 +47,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(newUser);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
-    public UserDTO.Response.Public update(UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException{
-        if (userRepository.existsById(userDtoRequest.getId())) {
-            User persistedUser = userRepository.findById(userDtoRequest.getId()).get();
+    public UserDTO.Response.Public update(UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException {
+        User persistedUser = userRepository.findById(userDtoRequest.getId())
+                .orElseThrow(() ->
+                        new NoSuchEntityException(String.format("There is no User with ID = %d", userDtoRequest.getId())));
 
-            userMapper.updateEntity(userDtoRequest, persistedUser);
-            userRepository.save(persistedUser);
+        userMapper.updateEntity(userDtoRequest, persistedUser);
+        userRepository.save(persistedUser);
 
-            return userMapper.toDto(persistedUser);
-        } else {
-            throw new NoSuchEntityException(String.format("There is no User with id = %d to update", userDtoRequest.getId()));
-        }
+        return userMapper.toDto(persistedUser);
     }
 
     @Override
