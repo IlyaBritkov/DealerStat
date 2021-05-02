@@ -21,6 +21,7 @@ public class FeedbackRestController {
     private final FeedbackService feedbackService;
 
     @GetMapping
+    // all
     public ResponseEntity<List<FeedbackDTO.Response.Public>> getAllFeedbacks() {
         List<FeedbackDTO.Response.Public> feedbackDtoResponseList = feedbackService.findAll();
         return new ResponseEntity<>(feedbackDtoResponseList, HttpStatus.OK);
@@ -28,18 +29,21 @@ public class FeedbackRestController {
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @GetMapping("/{id}")
+    // all
     public ResponseEntity<FeedbackDTO.Response.Public> getFeedbackById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.findById(id).get();
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    // anon + new user
     public ResponseEntity<FeedbackDTO.Response.Public> addNewFeedback(@RequestBody FeedbackDTO.Request.Create feedbackDtoRequest) throws NoSuchEntityException {
         FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.save(feedbackDtoRequest);
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.CREATED);
     }
 
     @PatchMapping
+    // only admin
     public ResponseEntity<FeedbackDTO.Response.Public> updateFeedback(@RequestBody FeedbackDTO.Request.Update feedbackDtoRequest) throws NoSuchEntityException{
         FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.update(feedbackDtoRequest);
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.OK);
@@ -47,6 +51,7 @@ public class FeedbackRestController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    // only admin
     public void deleteFeedbackById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         feedbackService.deleteById(id);
     }

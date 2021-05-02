@@ -23,6 +23,7 @@ public class GameRestController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('games:read')")
+    // all
     public ResponseEntity<List<GameDTO.Response.Public>> getAllGames() {
         List<GameDTO.Response.Public> gameList = gameService.findAll();
         return new ResponseEntity<>(gameList, HttpStatus.OK);
@@ -31,6 +32,7 @@ public class GameRestController {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('games:read')")
+    // all
     public ResponseEntity<GameDTO.Response.Public> getGameById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         Optional<GameDTO.Response.Public> optionalGame = gameService.findById(id);
         return new ResponseEntity<>(optionalGame.get(), HttpStatus.OK);
@@ -38,6 +40,9 @@ public class GameRestController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('games:write')")
+    // anonim if + register
+    // trader
+    // admin
     public ResponseEntity<GameDTO.Response.Public> addNewGame(@RequestBody GameDTO.Request.Create gameDtoRequest) {
         GameDTO.Response.Public gameDtoResponse = gameService.save(gameDtoRequest);
         return new ResponseEntity<>(gameDtoResponse, HttpStatus.CREATED);
@@ -45,14 +50,16 @@ public class GameRestController {
 
     @PatchMapping
     @PreAuthorize("hasAuthority('games:write')")
+    // only admin
     public ResponseEntity<GameDTO.Response.Public> updateGame(@RequestBody GameDTO.Request.Update gameDtoRequest) throws NoSuchEntityException {
         GameDTO.Response.Public gameDtoResponse = gameService.update(gameDtoRequest);
         return new ResponseEntity<>(gameDtoResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('games:write')")
+//    @PreAuthorize("hasAuthority('games:write')")
     @ResponseStatus(HttpStatus.OK)
+    // only admin
     public void deleteGameById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         gameService.deleteById(id);
     }

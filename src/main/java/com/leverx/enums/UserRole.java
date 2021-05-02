@@ -10,8 +10,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public enum UserRole {
-    TRADER(Set.of(Permission.GAMES_READ)),
-    ADMIN(Set.of(Permission.GAMES_READ, Permission.GAMES_WRITE));
+    TRADER(Set.of(
+            Permission.APPROVED_USERS_READ,
+            Permission.GAMES_READ,
+            Permission.GAMES_WRITE
+    )),
+    ADMIN(Set.of(
+            Permission.NOT_APPROVED_USERS_READ,
+            Permission.GAMES_READ,
+            Permission.GAMES_WRITE
+    ));
 
     private final Set<Permission> permissions;
 

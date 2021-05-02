@@ -2,6 +2,7 @@ package com.leverx.exception_handling;
 
 import com.leverx.exception_handling.exception.JwtAuthenticationException;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
+import com.leverx.exception_handling.exception.UserSignUpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,14 @@ public class GlobalExceptionHandler {
         data.setInfo(exception.getMessage());
 
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<EntityIncorrectData> handleException(UserSignUpException exception) {
+        EntityIncorrectData data = new EntityIncorrectData();
+        data.setInfo(exception.getMessage());
+
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler

@@ -51,6 +51,10 @@ public class User extends AbstractBaseEntity {
     @NotNull
     private UserRole role;
 
+    @Column(name = "approved")
+    @NotNull
+    private Boolean approved = false;
+
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,

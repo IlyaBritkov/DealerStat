@@ -3,10 +3,11 @@ CREATE TABLE IF NOT EXISTS "user"
     id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     first_name varchar(30)              NOT NULL,
     last_name  varchar(35)              NOT NULL,
-    email      varchar(35)              NOT NULL,
+    email      varchar(35)              NOT NULL UNIQUE,
     password   varchar                  NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    role       user_role_enum           NOT NULL
+    role       user_role_enum           NOT NULL,
+    approved   boolean                  NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS game

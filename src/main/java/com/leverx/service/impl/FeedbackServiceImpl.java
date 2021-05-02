@@ -40,11 +40,27 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     public Optional<FeedbackDTO.Response.Public> findById(Integer id) throws NoSuchEntityException {
-        Feedback feedback = feedbackRepository.findById(id)
-                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id)));
+        Feedback feedback = getIfFeedbackByIdExists(id);
 
         return Optional.of(feedbackMapper.toDto(feedback));
 
+    }
+
+    @Override
+    public List<FeedbackDTO.Response.Public> findAllByUserId(Integer id) {
+        List<Feedback> feedbackList = feedbackRepository.findAllByTraderId(id);
+        return feedbackList.stream()
+                .map(feedbackMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<FeedbackDTO.Response.Public> findByIdAndUserId(Integer feedbackId, Integer userId) throws NoSuchEntityException {
+        Optional<Feedback> feedbackOptional = feedbackRepository.findByIdAndTraderId(feedbackId, userId);
+        Feedback feedback = feedbackOptional.orElseThrow(()
+                -> new NoSuchEntityException(String.format("There is no Trader with ID = %d", userId)));
+
+        return Optional.of(feedbackMapper.toDto(feedback));
     }
 
     public FeedbackDTO.Response.Public save(FeedbackDTO.Request.Create feedbackDtoRequest) throws NoSuchEntityException {
@@ -72,8 +88,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackDTO.Response.Public update(FeedbackDTO.Request.Update feedbackDtoRequest) throws NoSuchEntityException {
-        Feedback persistedFeedback = feedbackRepository.findById(feedbackDtoRequest.getId())
-                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with id = %d to update", feedbackDtoRequest.getId())));
+        Feedback persistedFeedback = getIfFeedbackByIdExists(feedbackDtoRequest.getId());
         feedbackMapper.updateEntity(feedbackDtoRequest, persistedFeedback);
 
         feedbackRepository.save(persistedFeedback);
@@ -91,5 +106,10 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setGame(null);
         feedback.setTrader(null);
         feedbackRepository.delete(feedback);
+    }
+
+    private Feedback getIfFeedbackByIdExists(Integer id) throws NoSuchEntityException {
+        return feedbackRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id)));
     }
 }

@@ -12,6 +12,10 @@ public interface FeedbackService {
 
     Optional<FeedbackDTO.Response.Public> findById(Integer id) throws RuntimeException;
 
+    List<FeedbackDTO.Response.Public> findAllByUserId(Integer id);
+
+    Optional<FeedbackDTO.Response.Public> findByIdAndUserId(Integer feedbackId, Integer userId);
+
     FeedbackDTO.Response.Public save(FeedbackDTO.Request.Create feedbackDtoRequest) throws NoSuchEntityException;
 
     FeedbackDTO.Response.Public update(FeedbackDTO.Request.Update feedbackDtoRequest) throws NoSuchEntityException;

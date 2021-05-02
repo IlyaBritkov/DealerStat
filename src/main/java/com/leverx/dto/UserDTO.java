@@ -33,6 +33,10 @@ public enum UserDTO {
         @NotBlank String getRole();
     }
 
+    private interface Approved {
+        @Positive Boolean getApproved();
+    }
+
     public enum Request {
         ;
 
@@ -54,6 +58,13 @@ public enum UserDTO {
             private String lastName;
             private String email;
             private String password;
+        }
+
+        @NoArgsConstructor
+        @Data
+        public static class Approve implements Id, Approved {
+            private Integer id;
+            private Boolean approved;
         }
     }
 
