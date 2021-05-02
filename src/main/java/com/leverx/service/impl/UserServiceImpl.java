@@ -99,24 +99,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO.Response.Public update(UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException {
-        User persistedUser = userRepository.findByIdAndApprovedTrue(userDtoRequest.getId()).orElseThrow(() ->
-                new NoSuchEntityException(String.format("There is no User with ID = %d", userDtoRequest.getId())));
-
-        userMapper.updateEntity(userDtoRequest, persistedUser);
-        userRepository.save(persistedUser);
-
+    public UserDTO.Response.Public update(Integer id, UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException {
+        User persistedUser = getIfApprovedTraderByIdExists(id);
+        userMapper.updateEntity(userDtoRequest,persistedUser);
         return userMapper.toDto(persistedUser);
     }
 
     @Override
-    public UserDTO.Response.Public approve(UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
-        User persistedUser = getIfNotApprovedTraderByIdExists(userDtoRequest.getId());
+    public UserDTO.Response.Public approve(Integer id, UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
+        User persistedUser;
+        try{
+            persistedUser = getIfNotApprovedTraderByIdExists(id);
+        }catch (NoSuchEntityException e){
+            throw new NoSuchEntityException(String.format("There is no unapproved Trader with ID = %d", id));
+        }
         persistedUser.setApproved(true);
         return userMapper.toDto(persistedUser);
     }
 
     @Override
+
     public void deleteById(Integer id) throws NoSuchEntityException {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);

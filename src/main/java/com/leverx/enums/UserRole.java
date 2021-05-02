@@ -11,12 +11,16 @@ import java.util.stream.Collectors;
 @Getter
 public enum UserRole {
     TRADER(Set.of(
-            Permission.APPROVED_USERS_READ,
+            Permission.USERS_UPDATE,
+
             Permission.GAMES_READ,
             Permission.GAMES_WRITE
     )),
     ADMIN(Set.of(
             Permission.NOT_APPROVED_USERS_READ,
+            Permission.USERS_UPDATE,
+            Permission.NOT_APPROVED_USERS_UPDATE,
+
             Permission.GAMES_READ,
             Permission.GAMES_WRITE
     ));

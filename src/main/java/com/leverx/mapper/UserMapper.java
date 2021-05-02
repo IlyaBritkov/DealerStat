@@ -12,12 +12,13 @@ public interface UserMapper {
     @Mapping(source = "user.role", target = "role")
     UserDTO.Response.Public toDto(User user);
 
-
+    @Mapping(target = "approved", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "games", ignore = true)
     User toEntity(UserDTO.Request.Create userDtoRequest);
 
-
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "approved", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "games", ignore = true)
     void updateEntity(UserDTO.Request.Update userDtoRequest, @MappingTarget User user);

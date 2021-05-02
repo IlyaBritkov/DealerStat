@@ -9,9 +9,9 @@ public enum Permission {
     GAMES_READ("games:read"),
     GAMES_WRITE("games:write"),
 
-    APPROVED_USERS_READ("approved_users:read"),
     NOT_APPROVED_USERS_READ("not_approved_users:read"),
-    USERS_WRITE("users:write");
+    USERS_UPDATE("users:update"),
+    NOT_APPROVED_USERS_UPDATE("not_approved_users:update");
 
     private final String permission;
 

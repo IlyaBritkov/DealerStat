@@ -1,11 +1,11 @@
 package com.leverx.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// todo validation
 public enum UserDTO {
     ;
 
@@ -34,7 +34,7 @@ public enum UserDTO {
     }
 
     private interface Approved {
-        @Positive Boolean getApproved();
+        @NotNull Boolean getApproved();
     }
 
     public enum Request {
@@ -52,8 +52,7 @@ public enum UserDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Update implements Id, FirstName, LastName, Email, Password {
-            private Integer id;
+        public static class Update implements FirstName, LastName, Email, Password {
             private String firstName;
             private String lastName;
             private String email;
@@ -62,8 +61,7 @@ public enum UserDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Approve implements Id, Approved {
-            private Integer id;
+        public static class Approve implements Approved {
             private Boolean approved;
         }
     }

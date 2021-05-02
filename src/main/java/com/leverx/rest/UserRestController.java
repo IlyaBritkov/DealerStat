@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +20,10 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
-public class UserRestController { // todo
+public class UserRestController {
     private final UserService userService;
 
     @GetMapping
-//    @PreAuthorize("hasAuthority('users:read')")
-    // all
     public ResponseEntity<List<UserDTO.Response.Public>> getAllApprovedTraders() {
         List<UserDTO.Response.Public> userList = userService.findAllApprovedTraders();
         return new ResponseEntity<>(userList, HttpStatus.OK);
@@ -32,34 +31,33 @@ public class UserRestController { // todo
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @GetMapping("/{id}")
-    // all
     public ResponseEntity<UserDTO.Response.Public> getApprovedTraderById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         Optional<UserDTO.Response.Public> optionalUser = userService.findApprovedTraderById(id);
         return new ResponseEntity<>(optionalUser.get(), HttpStatus.OK);
     }
 
-    // only admin
+    @GetMapping("/approve")
+    @PreAuthorize("hasAuthority('not_approved_users:read')")
     public ResponseEntity<List<UserDTO.Response.Public>> getAllNotApprovedTraders() {
         List<UserDTO.Response.Public> userList = userService.findAllNotApprovedTraders();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    // only admin
+    @GetMapping("/approve/{id}")
+    @PreAuthorize("hasAuthority('not_approved_users:read')")
     public ResponseEntity<UserDTO.Response.Public> getNotApprovedTraderById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         Optional<UserDTO.Response.Public> optionalUser = userService.findNotApprovedTraderById(id);
         return new ResponseEntity<>(optionalUser.get(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/feedbacks")
-    // all
     public ResponseEntity<List<FeedbackDTO.Response.Public>> getFeedbackByIdByUserId(@PathVariable("id") Integer id) {
         List<FeedbackDTO.Response.Public> feedbacksDtoResponse = userService.findAllFeedbacksByUser(id);
         return new ResponseEntity<>(feedbacksDtoResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/feedbacks/{feedbackId}")
-    // all
     public ResponseEntity<FeedbackDTO.Response.Public> getFeedbackByIdByUserId(@PathVariable("userId") Integer userId,
                                                                                @PathVariable("feedbackId") Integer feedbackId) throws NoSuchEntityException {
         FeedbackDTO.Response.Public feedbackDtoResponse = userService.findFeedbackByIdByUserIdUser(userId, feedbackId);
@@ -67,30 +65,31 @@ public class UserRestController { // todo
     }
 
     @PostMapping
-    // anon
     public ResponseEntity<UserDTO.Response.Public> addNewUser(@RequestBody UserDTO.Request.Create userDtoRequest) throws UserSignUpException {
         UserDTO.Response.Public userDtoResponse = userService.save(userDtoRequest);
         return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
     }
 
-    @PatchMapping
-    // trader and admin
-    public ResponseEntity<UserDTO.Response.Public> updateUser(@RequestBody UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException {
-        UserDTO.Response.Public userDtoResponse = userService.update(userDtoRequest);
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('users:update')")
+    public ResponseEntity<UserDTO.Response.Public> updateUser(@PathVariable("id") Integer id,
+                                                              @RequestBody UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException {
+        UserDTO.Response.Public userDtoResponse = userService.update(id, userDtoRequest);
         return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
     }
 
 
     @PatchMapping("/approve/{id}")
-    // only admin
-    public ResponseEntity<UserDTO.Response.Public> updateUser(@RequestBody UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
-        UserDTO.Response.Public userDtoResponse = userService.approve(userDtoRequest);
+    @PreAuthorize("hasAuthority('not_approved_users:update')")
+    public ResponseEntity<UserDTO.Response.Public> updateNotApprovedUser(@PathVariable("id") Integer id,
+                                                                         @RequestBody UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
+        UserDTO.Response.Public userDtoResponse = userService.approve(id, userDtoRequest);
         return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    // trader and admin
+    @PreAuthorize("hasAuthority('users:update')")
     public void deleteUserById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         userService.deleteById(id);
     }
