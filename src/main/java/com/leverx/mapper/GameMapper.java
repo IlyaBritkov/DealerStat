@@ -13,6 +13,7 @@ public interface GameMapper {
     @Mapping(target = "feedbacks", ignore = true)
     Game toEntity(GameDTO.Request.Create gameDtoRequest);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "traders", ignore = true)
     @Mapping(target = "feedbacks", ignore = true)
     void updateEntity(GameDTO.Request.Update gameDtoRequest, @MappingTarget Game game);

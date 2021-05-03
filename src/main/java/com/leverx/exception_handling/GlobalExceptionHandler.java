@@ -1,5 +1,6 @@
 package com.leverx.exception_handling;
 
+import com.leverx.exception_handling.exception.GameCreationException;
 import com.leverx.exception_handling.exception.JwtAuthenticationException;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
 import com.leverx.exception_handling.exception.UserSignUpException;
@@ -22,6 +23,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<EntityIncorrectData> handleException(GameCreationException exception) {
+        EntityIncorrectData data = new EntityIncorrectData();
+        data.setInfo(exception.getMessage());
+
+        return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<EntityIncorrectData> handleException(UserSignUpException exception) {
         EntityIncorrectData data = new EntityIncorrectData();
         data.setInfo(exception.getMessage());
@@ -33,7 +42,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseExceptionData> handleException(AccessDeniedException exception) {
         log.trace("Exception: {}", exception.toString());
         ResponseExceptionData data = new ResponseExceptionData();
-        data.setInfo("You have not access to this");
+        data.setInfo("You have not access to do this");
 
         return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
     }
@@ -52,7 +61,6 @@ public class GlobalExceptionHandler {
         log.trace("Exception: {}", exception.toString());
         ResponseExceptionData data = new ResponseExceptionData();
         data.setInfo("Page not found");
-
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 }

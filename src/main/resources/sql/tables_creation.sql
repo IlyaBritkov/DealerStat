@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS game
     id          integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name        varchar(30)              NOT NULL,
     description varchar,
-    created_at  timestamp with time zone NOT NULL
+    created_at  timestamp with time zone NOT NULL,
+    UNIQUE (name, description)
 );
 
 CREATE TABLE IF NOT EXISTS user_game

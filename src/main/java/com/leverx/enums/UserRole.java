@@ -13,16 +13,16 @@ public enum UserRole {
     TRADER(Set.of(
             Permission.USERS_UPDATE,
 
-            Permission.GAMES_READ,
-            Permission.GAMES_WRITE
+            Permission.GAMES_ADD
     )),
     ADMIN(Set.of(
             Permission.NOT_APPROVED_USERS_READ,
             Permission.USERS_UPDATE,
             Permission.NOT_APPROVED_USERS_UPDATE,
 
-            Permission.GAMES_READ,
-            Permission.GAMES_WRITE
+            Permission.GAMES_ADD,
+            Permission.GAMES_UPDATE,
+            Permission.GAMES_DELETE
     ));
 
     private final Set<Permission> permissions;

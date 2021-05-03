@@ -34,8 +34,7 @@ public enum GameDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Update implements Id, Name, Description {
-            private Integer id;
+        public static class Update implements Name, Description {
             private String name;
             private String description;
 
