@@ -22,7 +22,10 @@ public enum UserRole {
 
             Permission.GAMES_ADD,
             Permission.GAMES_UPDATE,
-            Permission.GAMES_DELETE
+            Permission.GAMES_DELETE,
+
+            Permission.NOT_APPROVED_FEEDBACKS_READ,
+            Permission.FEEDBACKS_UPDATE
     ));
 
     private final Set<Permission> permissions;

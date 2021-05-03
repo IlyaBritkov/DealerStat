@@ -47,8 +47,7 @@ public enum FeedbackDTO {
 
         @NoArgsConstructor
         @Data
-        public static class Update implements Id, Approved {
-            private Integer id;
+        public static class Approve implements Approved {
             private Boolean approved;
         }
     }

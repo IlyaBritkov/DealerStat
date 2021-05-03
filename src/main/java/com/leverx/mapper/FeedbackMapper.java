@@ -20,9 +20,10 @@ public interface FeedbackMapper {
     @Mapping(target = "approved", ignore = true)
     Feedback toEntity(FeedbackDTO.Request.Create feedbackDtoRequest);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "message", ignore = true)
     @Mapping(target = "trader", ignore = true)
     @Mapping(target = "game", ignore = true)
     @Mapping(target = "rating", ignore = true)
-    void updateEntity(FeedbackDTO.Request.Update feedbackDtoRequest, @MappingTarget Feedback feedback);
+    void updateEntity(FeedbackDTO.Request.Approve feedbackDtoRequest, @MappingTarget Feedback feedback);
 }

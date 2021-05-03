@@ -11,6 +11,7 @@ import com.leverx.repository.FeedbackRepository;
 import com.leverx.repository.GameRepository;
 import com.leverx.repository.UserRepository;
 import com.leverx.service.FeedbackService;
+import com.leverx.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,63 +22,91 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
+
+@Service
+@Transactional
 public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackRepository feedbackRepository;
+
     private final GameRepository gameRepository;
+
+    private final UserService userService;
     private final UserRepository userRepository;
 
     private final FeedbackMapper feedbackMapper;
 
-    public List<FeedbackDTO.Response.Public> findAll() {
-        List<Feedback> feedbackList = feedbackRepository.findAll();
+    @Override
+    public List<FeedbackDTO.Response.Public> findAllApprovedFeedbacks() {
+        List<Feedback> feedbackList = feedbackRepository.findAllByApprovedIsTrue();
 
         return feedbackList.stream()
                 .map(feedbackMapper::toDto).collect(Collectors.toList());
     }
 
-    public Optional<FeedbackDTO.Response.Public> findById(Integer id) throws NoSuchEntityException {
-        Feedback feedback = getIfFeedbackByIdExists(id);
+    @Override
+    public Optional<FeedbackDTO.Response.Public> findApprovedFeedbackById(Integer id) throws NoSuchEntityException {
+        Feedback feedback = getIfApprovedFeedbackByIdExists(id);
 
         return Optional.of(feedbackMapper.toDto(feedback));
-
     }
 
     @Override
-    public List<FeedbackDTO.Response.Public> findAllByUserId(Integer id) {
-        List<Feedback> feedbackList = feedbackRepository.findAllByTraderId(id);
+    public List<FeedbackDTO.Response.Public> findAllNotApprovedFeedbacks() {
+        List<Feedback> feedbackList = feedbackRepository.findAllByApprovedIsNull();
+
+        return feedbackList.stream()
+                .map(feedbackMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<FeedbackDTO.Response.Public> findNotApprovedFeedbackById(Integer id) throws NoSuchEntityException {
+        Optional<Feedback> feedbackOptional = feedbackRepository.findById(id);
+        if (feedbackOptional.isEmpty() || feedbackOptional.get().getApproved() != null) {
+            throw new NoSuchEntityException(String.format("There is no unapproved Feedback with ID = %d", id));
+        }
+        return Optional.of(feedbackMapper.toDto(feedbackOptional.get()));
+    }
+
+    @Override
+    public List<FeedbackDTO.Response.Public> findAllApprovedByUserId(Integer traderId) throws NoSuchEntityException {
+        userService.findApprovedTraderById(traderId); // throw exception if doest exist
+        List<Feedback> feedbackList = feedbackRepository.findAllByApprovedIsTrueAndTraderId(traderId);
         return feedbackList.stream()
                 .map(feedbackMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<FeedbackDTO.Response.Public> findByIdAndUserId(Integer feedbackId, Integer userId) throws NoSuchEntityException {
-        Optional<Feedback> feedbackOptional = feedbackRepository.findByIdAndTraderId(feedbackId, userId);
-        Feedback feedback = feedbackOptional.orElseThrow(()
-                -> new NoSuchEntityException(String.format("There is no Trader with ID = %d", userId)));
+    public Optional<FeedbackDTO.Response.Public> findApprovedByIdAndUserId(Integer feedbackId, Integer traderId) throws NoSuchEntityException {
+        userService.findApprovedTraderById(traderId); // throw exception if doest exist
+        Optional<Feedback> feedbackOptional = feedbackRepository.findByIdAndTraderId(feedbackId, traderId);
+        if (feedbackOptional.isEmpty()
+                || feedbackOptional.get().getApproved() == null
+                || !feedbackOptional.get().getApproved()) {
+            throw new NoSuchEntityException(String.format("There is no approved Feedback with ID = %d", traderId));
+        }
 
-        return Optional.of(feedbackMapper.toDto(feedback));
+        return Optional.of(feedbackMapper.toDto(feedbackOptional.get()));
     }
 
+    @Override
     public FeedbackDTO.Response.Public save(FeedbackDTO.Request.Create feedbackDtoRequest) throws NoSuchEntityException {
         Integer traderId = feedbackDtoRequest.getTraderId();
         Integer gameId = feedbackDtoRequest.getGameId();
 
-        Optional<User> optionalTrader = userRepository.findById(traderId);
+        Optional<User> optionalTrader = userRepository.findByIdAndApprovedTrue(traderId);
 
         if (optionalTrader.isEmpty() ||
                 optionalTrader.get().getRole() != UserRole.TRADER) {
-            throw new NoSuchEntityException(String.format("There is no Trader with ID = %d", traderId));
+            throw new NoSuchEntityException(String.format("There is no approved Trader with ID = %d", traderId));
         }
 
         User trader = optionalTrader.get();
 
         Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Game with ID = %d", traderId)));
+                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Game with ID = %d", gameId)));
 
         Feedback newFeedback = feedbackMapper.toEntity(feedbackDtoRequest);
         newFeedback.setTrader(trader);
@@ -87,8 +116,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public FeedbackDTO.Response.Public update(FeedbackDTO.Request.Update feedbackDtoRequest) throws NoSuchEntityException {
-        Feedback persistedFeedback = getIfFeedbackByIdExists(feedbackDtoRequest.getId());
+    public FeedbackDTO.Response.Public approve(Integer id, FeedbackDTO.Request.Approve feedbackDtoRequest) throws NoSuchEntityException {
+        Feedback persistedFeedback = feedbackRepository.findById(id).orElseThrow(() ->
+                new NoSuchEntityException(String.format("There is no approved Feedback with ID = %d", id)));
         feedbackMapper.updateEntity(feedbackDtoRequest, persistedFeedback);
 
         feedbackRepository.save(persistedFeedback);
@@ -96,7 +126,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackMapper.toDto(persistedFeedback);
     }
 
-    @Transactional
+    @Override
     public void deleteById(Integer id) throws NoSuchEntityException {
         Feedback feedback = feedbackRepository.findById(id)
                 .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id)));
@@ -108,8 +138,13 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackRepository.delete(feedback);
     }
 
-    private Feedback getIfFeedbackByIdExists(Integer id) throws NoSuchEntityException {
-        return feedbackRepository.findById(id)
-                .orElseThrow(() -> new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id)));
+    private Feedback getIfApprovedFeedbackByIdExists(Integer id) throws NoSuchEntityException {
+        Optional<Feedback> optionalFeedback = feedbackRepository.findById(id);
+        if (optionalFeedback.isEmpty() ||
+                optionalFeedback.get().getApproved() == null ||
+                !optionalFeedback.get().getApproved()) {
+            throw new NoSuchEntityException(String.format("There is no Feedback with ID = %d", id));
+        }
+        return optionalFeedback.get();
     }
 }

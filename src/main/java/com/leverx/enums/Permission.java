@@ -12,7 +12,10 @@ public enum Permission {
 
     GAMES_ADD("games:add"),
     GAMES_UPDATE("games:update"),
-    GAMES_DELETE("games:delete");
+    GAMES_DELETE("games:delete"),
+
+    NOT_APPROVED_FEEDBACKS_READ("not_approved_feedbacks:read"),
+    FEEDBACKS_UPDATE("feedbacks:update");
 
     private final String permission;
 

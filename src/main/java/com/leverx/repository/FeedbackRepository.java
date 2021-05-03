@@ -10,9 +10,14 @@ import java.util.Optional;
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
 
+    List<Feedback> findAllByApprovedIsTrue();
+
+    List<Feedback> findAllByApprovedIsNull();
+
     void deleteFeedbackById(Integer integer);
 
-    List<Feedback> findAllByTraderId(Integer id);
+    List<Feedback> findAllByApprovedIsTrueAndTraderId(Integer id);
 
     Optional<Feedback> findByIdAndTraderId(Integer feedbackId, Integer userId);
+
 }

@@ -10,7 +10,6 @@ import com.leverx.mapper.UserMapper;
 import com.leverx.repository.UserRepository;
 import com.leverx.service.FeedbackService;
 import com.leverx.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,16 +21,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final FeedbackService feedbackService;
+    private FeedbackService feedbackService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setFeedbackService(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
+    }
 
     @Override
     public List<UserDTO.Response.Public> findAllApprovedTraders() {
@@ -73,14 +83,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<FeedbackDTO.Response.Public> findAllFeedbacksByUser(Integer id) throws NoSuchEntityException {
         getIfApprovedTraderByIdExists(id);
-        return feedbackService.findAllByUserId(id);
+        return feedbackService.findAllApprovedByUserId(id);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public FeedbackDTO.Response.Public findFeedbackByIdByUserIdUser(Integer userId, Integer feedbackId) throws NoSuchEntityException {
         getIfApprovedTraderByIdExists(userId);
-        return feedbackService.findByIdAndUserId(feedbackId, userId).get();
+        return feedbackService.findApprovedByIdAndUserId(feedbackId, userId).get();
     }
 
     @Override

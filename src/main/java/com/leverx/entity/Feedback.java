@@ -6,6 +6,7 @@ import com.leverx.enums.RatingEnum;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -47,6 +48,7 @@ public class Feedback extends AbstractBaseEntity {
     private final ZonedDateTime createdAt = ZonedDateTime.now();
 
     @Column(name = "approved")
+    @Nullable
     private Boolean approved;
 
     @Enumerated(EnumType.STRING)

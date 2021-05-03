@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,37 +22,50 @@ public class FeedbackRestController {
     private final FeedbackService feedbackService;
 
     @GetMapping
-    // all
-    public ResponseEntity<List<FeedbackDTO.Response.Public>> getAllFeedbacks() {
-        List<FeedbackDTO.Response.Public> feedbackDtoResponseList = feedbackService.findAll();
+    public ResponseEntity<List<FeedbackDTO.Response.Public>> getAllApprovedFeedbacks() {
+        List<FeedbackDTO.Response.Public> feedbackDtoResponseList = feedbackService.findAllApprovedFeedbacks();
         return new ResponseEntity<>(feedbackDtoResponseList, HttpStatus.OK);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @GetMapping("/{id}")
-    // all
-    public ResponseEntity<FeedbackDTO.Response.Public> getFeedbackById(@PathVariable("id") Integer id) throws NoSuchEntityException {
-        FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.findById(id).get();
+    public ResponseEntity<FeedbackDTO.Response.Public> getApprovedFeedbackById(@PathVariable("id") Integer id) throws NoSuchEntityException {
+        FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.findApprovedFeedbackById(id).get();
+        return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/approve")
+    @PreAuthorize("hasAuthority('not_approved_feedbacks:read')")
+    public ResponseEntity<List<FeedbackDTO.Response.Public>> getAllNotApprovedFeedbacks() {
+        List<FeedbackDTO.Response.Public> feedbackDtoResponseList = feedbackService.findAllNotApprovedFeedbacks();
+        return new ResponseEntity<>(feedbackDtoResponseList, HttpStatus.OK);
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @GetMapping("/approve/{id}")
+    @PreAuthorize("hasAuthority('not_approved_feedbacks:read')")
+    public ResponseEntity<FeedbackDTO.Response.Public> getNotApprovedFeedbackById(@PathVariable("id") Integer id) throws NoSuchEntityException {
+        FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.findNotApprovedFeedbackById(id).get();
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    // anon + new user
     public ResponseEntity<FeedbackDTO.Response.Public> addNewFeedback(@RequestBody FeedbackDTO.Request.Create feedbackDtoRequest) throws NoSuchEntityException {
         FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.save(feedbackDtoRequest);
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.CREATED);
     }
 
-    @PatchMapping
-    // only admin
-    public ResponseEntity<FeedbackDTO.Response.Public> updateFeedback(@RequestBody FeedbackDTO.Request.Update feedbackDtoRequest) throws NoSuchEntityException{
-        FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.update(feedbackDtoRequest);
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('feedbacks:update')")
+    public ResponseEntity<FeedbackDTO.Response.Public> updateFeedback(@PathVariable Integer id,
+                                                                      @RequestBody FeedbackDTO.Request.Approve feedbackDtoRequest) throws NoSuchEntityException {
+        FeedbackDTO.Response.Public feedbackDtoResponse = feedbackService.approve(id, feedbackDtoRequest);
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('feedbacks:update')")
     @ResponseStatus(HttpStatus.OK)
-    // only admin
     public void deleteFeedbackById(@PathVariable("id") Integer id) throws NoSuchEntityException {
         feedbackService.deleteById(id);
     }
