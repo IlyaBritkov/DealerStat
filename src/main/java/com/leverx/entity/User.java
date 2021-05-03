@@ -6,6 +6,7 @@ import com.leverx.enums.UserRole;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -52,8 +53,8 @@ public class User extends AbstractBaseEntity {
     private UserRole role;
 
     @Column(name = "approved")
-    @NotNull
-    private Boolean approved = false;
+    @Nullable
+    private Boolean approved;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,

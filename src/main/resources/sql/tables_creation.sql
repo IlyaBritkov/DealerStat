@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "user"
     password   varchar                  NOT NULL,
     created_at timestamp with time zone NOT NULL,
     role       user_role_enum           NOT NULL,
-    approved   boolean                  NOT NULL
+    approved   boolean
 );
 
 CREATE TABLE IF NOT EXISTS game

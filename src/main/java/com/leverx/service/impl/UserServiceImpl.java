@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<UserDTO.Response.Public> findAllNotApprovedTraders() {
-        List<User> userList = userRepository.findAllByApprovedIsFalse()
+        List<User> userList = userRepository.findAllByApprovedIsNull()
                 .stream()
                 .filter(user -> user.getRole() == UserRole.TRADER)
                 .collect(Collectors.toList());
@@ -111,19 +111,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO.Response.Public update(Integer id, UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException {
         User persistedUser = getIfApprovedTraderByIdExists(id);
-        userMapper.updateEntity(userDtoRequest,persistedUser);
+        userMapper.updateEntity(userDtoRequest, persistedUser);
         return userMapper.toDto(persistedUser);
     }
 
     @Override
     public UserDTO.Response.Public approve(Integer id, UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
         User persistedUser;
-        try{
+        try {
             persistedUser = getIfNotApprovedTraderByIdExists(id);
-        }catch (NoSuchEntityException e){
+        } catch (NoSuchEntityException e) {
             throw new NoSuchEntityException(String.format("There is no unapproved Trader with ID = %d", id));
         }
-        persistedUser.setApproved(true);
+        userMapper.approveEntity(userDtoRequest, persistedUser);
         return userMapper.toDto(persistedUser);
     }
 
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getIfNotApprovedTraderByIdExists(Integer id) throws NoSuchEntityException {
-        Optional<User> optionalUser = userRepository.findByIdAndApprovedFalse(id);
+        Optional<User> optionalUser = userRepository.findByIdAndApprovedIsNull(id);
         if (optionalUser.isEmpty() || optionalUser.get().getRole() != UserRole.TRADER) {
             throw new NoSuchEntityException(String.format("There is no Trader with ID = %d", id));
         }

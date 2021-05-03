@@ -85,7 +85,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (feedbackOptional.isEmpty()
                 || feedbackOptional.get().getApproved() == null
                 || !feedbackOptional.get().getApproved()) {
-            throw new NoSuchEntityException(String.format("There is no approved Feedback with ID = %d", traderId));
+            throw new NoSuchEntityException(String.format("There is no approved Feedback with ID = %d", feedbackId));
         }
 
         return Optional.of(feedbackMapper.toDto(feedbackOptional.get()));

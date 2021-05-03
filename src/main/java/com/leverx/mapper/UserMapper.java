@@ -22,4 +22,13 @@ public interface UserMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "games", ignore = true)
     void updateEntity(UserDTO.Request.Update userDtoRequest, @MappingTarget User user);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "lastName", ignore = true)
+    @Mapping(target = "firstName", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "games", ignore = true)
+    void approveEntity(UserDTO.Request.Approve userDtoRequest, @MappingTarget User user);
 }

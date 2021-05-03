@@ -10,11 +10,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findAllByApprovedIsTrue();
 
-    List<User> findAllByApprovedIsFalse();
+    List<User> findAllByApprovedIsNull();
 
     Optional<User> findByIdAndApprovedTrue(Integer id);
 
-    Optional<User> findByIdAndApprovedFalse(Integer id);
+    Optional<User> findByIdAndApprovedIsNull(Integer id);
 
     Optional<User> findByEmail(String email);
 }

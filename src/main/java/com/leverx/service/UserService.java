@@ -26,9 +26,9 @@ public interface UserService {
 
     UserDTO.Response.Public save(UserDTO.Request.Create userDtoRequest) throws UserSignUpException;
 
-    UserDTO.Response.Public update(Integer id,UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException;
+    UserDTO.Response.Public update(Integer id, UserDTO.Request.Update userDtoRequest) throws NoSuchEntityException;
 
-    UserDTO.Response.Public approve(Integer id,UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException;
+    UserDTO.Response.Public approve(Integer id, UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException;
 
     void deleteById(Integer id);
 }

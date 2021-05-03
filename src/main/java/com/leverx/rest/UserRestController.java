@@ -81,8 +81,8 @@ public class UserRestController {
 
     @PatchMapping("/approve/{id}")
     @PreAuthorize("hasAuthority('not_approved_users:update')")
-    public ResponseEntity<UserDTO.Response.Public> updateNotApprovedUser(@PathVariable("id") Integer id,
-                                                                         @RequestBody UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
+    public ResponseEntity<UserDTO.Response.Public> approveNotApprovedUser(@PathVariable("id") Integer id,
+                                                                          @RequestBody UserDTO.Request.Approve userDtoRequest) throws NoSuchEntityException {
         UserDTO.Response.Public userDtoResponse = userService.approve(id, userDtoRequest);
         return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
     }

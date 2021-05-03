@@ -1,10 +1,10 @@
 package com.leverx.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 public enum UserDTO {
     ;
@@ -34,7 +34,7 @@ public enum UserDTO {
     }
 
     private interface Approved {
-        @NotNull Boolean getApproved();
+        @Nullable Boolean getApproved();
     }
 
     public enum Request {
