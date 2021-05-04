@@ -1,6 +1,7 @@
 package com.leverx.service;
 
 import com.leverx.dto.FeedbackDTO;
+import com.leverx.dto.GameDTO;
 import com.leverx.dto.UserDTO;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
 import com.leverx.exception_handling.exception.UserSignUpException;
@@ -20,9 +21,13 @@ public interface UserService {
 
     Optional<UserDTO.Response.Public> findByEmail(String email) throws UsernameNotFoundException;
 
+    List<GameDTO.Response.Public> findAllGamesByUser(Integer id) throws NoSuchEntityException;
+
+    Optional<GameDTO.Response.Public> findGameByIdByUser(Integer userId, Integer gameId) throws NoSuchEntityException;
+
     List<FeedbackDTO.Response.Public> findAllFeedbacksByUser(Integer id) throws NoSuchEntityException;
 
-    FeedbackDTO.Response.Public findFeedbackByIdByUserIdUser(Integer userId, Integer feedbackId);
+    Optional<FeedbackDTO.Response.Public> findFeedbackByIdByUserIdUser(Integer userId, Integer feedbackId);
 
     UserDTO.Response.Public save(UserDTO.Request.Create userDtoRequest) throws UserSignUpException;
 

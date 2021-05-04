@@ -2,10 +2,12 @@ package com.leverx.service.impl;
 
 import com.leverx.dto.GameDTO;
 import com.leverx.entity.Game;
+import com.leverx.entity.User;
 import com.leverx.exception_handling.exception.GameCreationException;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
 import com.leverx.mapper.GameMapper;
 import com.leverx.repository.GameRepository;
+import com.leverx.repository.UserRepository;
 import com.leverx.service.GameService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GameServiceImpl implements GameService {
     private final GameRepository gameRepository;
+    private final UserRepository userRepository;
 
     private final GameMapper gameMapper;
 
@@ -44,15 +47,22 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameDTO.Response.Public save(GameDTO.Request.Create gameDtoRequest) throws GameCreationException {
-        if (gameRepository.findByNameAndDescription(gameDtoRequest.getName(), gameDtoRequest.getDescription())
-                .isPresent()) {
-            throw new GameCreationException("Game with the same name and description already exists");
+        User trader = userRepository.findById(gameDtoRequest.getTraderId()).orElseThrow(() ->
+                new NoSuchEntityException(String.format("There is no trader with ID %d", gameDtoRequest.getTraderId())));
+
+        Optional<Game> optionalGame = gameRepository.findByNameAndDescription(
+                gameDtoRequest.getName(), gameDtoRequest.getDescription());
+
+        Game game = optionalGame.orElseGet(() -> gameMapper.toEntity(gameDtoRequest));
+
+        if (trader.getGames().stream().anyMatch(traderGame -> traderGame.getId().equals(game.getId()))) {
+            throw new GameCreationException(String.format("Trader with ID=%d already has game with ID=%d", trader.getId(), game.getId()));
         }
-        Game newGame = gameMapper.toEntity(gameDtoRequest);
 
-        Game savedGame = gameRepository.save(newGame);
+        trader.addGame(game);
+        userRepository.save(trader);
 
-        return gameMapper.toDto(savedGame);
+        return gameMapper.toDto(game);
     }
 
     @Override

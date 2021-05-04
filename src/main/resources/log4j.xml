@@ -26,9 +26,14 @@
         <appender-ref ref="consoleAppender"/>
     </category>
 
-    <category name="org.hibernate.type">
-        <!--Options: all, trace, debug, info, warn, error, fatal-->
-        <priority value="trace"/>
+    <category name="org.hibernate">
+        <priority value="info" />
+        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="consoleAppender"/>
+    </category>
+
+    <category name="java.sql">
+        <priority value="debug" />
         <appender-ref ref="fileAppender"/>
         <appender-ref ref="consoleAppender"/>
     </category>

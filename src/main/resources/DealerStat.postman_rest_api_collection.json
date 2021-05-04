@@ -481,6 +481,51 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "getAllGamesByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/users/34/games",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"34",
+								"games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getGameByIdByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/users/34/games/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"34",
+								"games",
+								"10"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

@@ -1,6 +1,7 @@
 package com.leverx.rest;
 
 import com.leverx.dto.FeedbackDTO;
+import com.leverx.dto.GameDTO;
 import com.leverx.dto.UserDTO;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
 import com.leverx.exception_handling.exception.UserSignUpException;
@@ -51,16 +52,31 @@ public class UserRestController {
         return new ResponseEntity<>(optionalUser.get(), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/games")
+    public ResponseEntity<List<GameDTO.Response.Public>> getAllGamesByUserId(@PathVariable("id") Integer id) throws NoSuchEntityException {
+        List<GameDTO.Response.Public> gamesDtoResponse = userService.findAllGamesByUser(id);
+        return new ResponseEntity<>(gamesDtoResponse, HttpStatus.OK);
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @GetMapping("/{userId}/games/{gameId}")
+    public ResponseEntity<GameDTO.Response.Public> getGameByIdByUserId(@PathVariable("userId") Integer userId,
+                                                                       @PathVariable("gameId") Integer feedbackId) throws NoSuchEntityException {
+        GameDTO.Response.Public gameDtoResponse = userService.findGameByIdByUser(userId, feedbackId).get();
+        return new ResponseEntity<>(gameDtoResponse, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/feedbacks")
     public ResponseEntity<List<FeedbackDTO.Response.Public>> getFeedbackByIdByUserId(@PathVariable("id") Integer id) {
         List<FeedbackDTO.Response.Public> feedbacksDtoResponse = userService.findAllFeedbacksByUser(id);
         return new ResponseEntity<>(feedbacksDtoResponse, HttpStatus.OK);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @GetMapping("/{userId}/feedbacks/{feedbackId}")
     public ResponseEntity<FeedbackDTO.Response.Public> getFeedbackByIdByUserId(@PathVariable("userId") Integer userId,
                                                                                @PathVariable("feedbackId") Integer feedbackId) throws NoSuchEntityException {
-        FeedbackDTO.Response.Public feedbackDtoResponse = userService.findFeedbackByIdByUserIdUser(userId, feedbackId);
+        FeedbackDTO.Response.Public feedbackDtoResponse = userService.findFeedbackByIdByUserIdUser(userId, feedbackId).get();
         return new ResponseEntity<>(feedbackDtoResponse, HttpStatus.OK);
     }
 

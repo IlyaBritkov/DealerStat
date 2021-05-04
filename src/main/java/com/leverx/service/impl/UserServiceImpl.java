@@ -1,11 +1,13 @@
 package com.leverx.service.impl;
 
 import com.leverx.dto.FeedbackDTO;
+import com.leverx.dto.GameDTO;
 import com.leverx.dto.UserDTO;
 import com.leverx.entity.User;
 import com.leverx.enums.UserRole;
 import com.leverx.exception_handling.exception.NoSuchEntityException;
 import com.leverx.exception_handling.exception.UserSignUpException;
+import com.leverx.mapper.GameMapper;
 import com.leverx.mapper.UserMapper;
 import com.leverx.repository.UserRepository;
 import com.leverx.service.FeedbackService;
@@ -27,14 +29,19 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+
     private FeedbackService feedbackService;
+
     private final UserMapper userMapper;
+    private final GameMapper gameMapper;
+
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, GameMapper gameMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.gameMapper = gameMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -81,16 +88,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<GameDTO.Response.Public> findAllGamesByUser(Integer id) throws NoSuchEntityException {
+        User trader = getIfApprovedTraderByIdExists(id);
+        return trader.getGames()
+                .stream()
+                .map(gameMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<GameDTO.Response.Public> findGameByIdByUser(Integer userId, Integer gameId) throws NoSuchEntityException {
+        User trader = getIfApprovedTraderByIdExists(userId);
+        return Optional.of(
+                gameMapper.toDto(
+                        trader.getGames()
+                                .stream()
+                                .filter(game -> game.getId().equals(gameId))
+                                .findFirst()
+                                .orElseThrow(() ->
+                                        new NoSuchEntityException(String.format("Trader with ID=%d doesn't have game with ID=%d", userId, gameId))))
+
+        );
+    }
+
+    @Override
     public List<FeedbackDTO.Response.Public> findAllFeedbacksByUser(Integer id) throws NoSuchEntityException {
         getIfApprovedTraderByIdExists(id);
         return feedbackService.findAllApprovedByUserId(id);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
-    public FeedbackDTO.Response.Public findFeedbackByIdByUserIdUser(Integer userId, Integer feedbackId) throws NoSuchEntityException {
+    public Optional<FeedbackDTO.Response.Public> findFeedbackByIdByUserIdUser(Integer userId, Integer feedbackId) throws NoSuchEntityException {
         getIfApprovedTraderByIdExists(userId);
-        return feedbackService.findApprovedByIdAndUserId(feedbackId, userId).get();
+        return feedbackService.findApprovedByIdAndUserId(feedbackId, userId);
     }
 
     @Override

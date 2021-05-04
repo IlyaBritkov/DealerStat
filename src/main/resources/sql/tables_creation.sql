@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS user_game
     id      integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer,
     game_id integer,
+    CONSTRAINT user_game_unique UNIQUE (user_id,game_id),
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "user" (id),
     CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES game (id)
 );
